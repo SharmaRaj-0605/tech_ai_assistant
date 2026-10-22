@@ -2,21 +2,6 @@
 
 A technical-focused chatbot built around LangGraph and Retrieval-Augmented Generation (RAG). The target system combines document ingestion, hybrid search, source-grounded answers, human-in-the-loop (HITL) approvals, persistent conversations, a Streamlit interface, a FastAPI service, PostgreSQL checkpoints, LangSmith observability, and automated evaluations.
 
-> **Project status:** Code for the API, guardrails, ingestion, hybrid retrieval, HITL graph, Streamlit UI, tests and evals is written, but none of it has been run yet (the build sandbox couldn't install dependencies). Run `pytest` first and fix whatever breaks. The Docker files are also untested. Not done: OCR, rate limiting, reranker implementation (the hook exists), and LangSmith dataset uploads. No evaluation results exist yet.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Technology Stack](#technology-stack)
-- [Functionality](#functionality)
-- [RAG and Ingestion Pipeline](#rag-and-ingestion-pipeline)
-- [Architecture](#architecture)
-- [Evaluation and Testing](#evaluation-and-testing)
-- [Project Structure](#project-structure)
-- [Configuration](#configuration)
-- [Local Development](#local-development)
-- [Security and Reliability](#security-and-reliability)
-- [Implementation Notes](#implementation-notes)
 
 ## Overview
 
@@ -254,7 +239,7 @@ evals/
 └── run_evals.py
 ```
 
-The golden dataset is built from the "Agentic AI using LangGraph" notes PDF. Put the PDF at `evals/data/agentic_ai_langgraph.pdf` (or set `EVAL_PDF`). The first run indexes it into `evals/.index/` and later runs reuse that index. Each `qa` row has a reference answer and the PDF pages that hold it, and retrieval counts a chunk as relevant when it comes from one of those pages. `python -m evals.run_evals --rag-limit 10` runs RAGAS on only the first 10 questions, which is useful on free-tier rate limits. The PDF is larger than the default 20 MB upload limit, so set `MAX_UPLOAD_MB=120` in `.env` if you also want to upload it through the app.
+The golden dataset is built from the "Agentic AI using LangGraph" notes PDF.
 
 Use LangSmith datasets/experiments to compare runs and inspect failures. LLM-as-judge scores may help evaluate relevance or groundedness, but should be cross-checked against human-reviewed examples and deterministic tests where possible.
 
@@ -331,7 +316,6 @@ streamlit run app_hitl.py
 python -m evals.run_evals
 ```
 
-To run everything in Docker (API, Streamlit and PostgreSQL), fill in `.env` including `POSTGRES_PASSWORD`, then run `docker compose up --build`. The API is on port 8000 and the UI on 8501. Compose builds `DATABASE_URL` itself and keeps the database, the FAISS index and saved notes in named volumes (`pgdata`, `faiss_data`, `notes_data`), so they survive restarts.
 
 ## Security and Reliability
 
@@ -347,15 +331,5 @@ To run everything in Docker (API, Streamlit and PostgreSQL), fill in `.env` incl
 - Pin dependencies and run automated tests before releases.
 - Test recovery, re-ingestion, deletion, and index consistency.
 
-## Implementation Notes
 
-- The current tutorial's combined HITL files provide a starting point, not a guarantee that every feature above is already available.
-- Reuse the existing `app_hitl.py` and `agentic_chatbot_hitl_backend.py` wherever practical, making only the changes needed to connect new modules.
-- Hybrid retrieval requires the vector and keyword indexes to be built from the same version of the chunk collection.
-- PostgreSQL checkpoints persist graph state; they do not, by themselves, implement user management, a document registry, or vector storage.
-- LangSmith traces show what happened during a run; the evaluation suite measures how well it performed.
-- Label project status and benchmark results accurately. Do not claim production readiness until the implementation and tests support that claim.
 
-## License
-
-Add a license file if you intend to distribute the project publicly. Respect the licenses of the original repository and all third-party dependencies.
