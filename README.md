@@ -264,8 +264,8 @@ The following is the intended cleaned-up structure. Preserve the existing UI and
 
 ```text
 Agentic-Chatbot-using-LangGraph/
-├── app_hitl.py                       # Existing Streamlit UI and HITL flow
-├── agentic_chatbot_hitl_backend.py   # Existing LangGraph workflow; updated as needed
+├── app.py                       # Existing Streamlit UI and HITL flow
+├── backend.py   # Existing LangGraph workflow; updated as needed
 ├── api.py                            # FastAPI application
 ├── guardrails/
 │   ├── __init__.py
@@ -280,17 +280,13 @@ Agentic-Chatbot-using-LangGraph/
 ├── README.md
 ├── faiss_db/                         # Persisted vector index, if retained
 ├── evals/
-│   ├── common.py
-│   ├── dataset.jsonl
-│   ├── evaluate_retrieval.py
-│   ├── evaluate_rag.py
-│   ├── evaluate_guardrails.py
-│   └── run_evals.py
-└── tests/
-    ├── test_guardrails.py
-    ├── test_retrieval.py
-    ├── test_api.py
-    └── test_persistence.py
+    ├── common.py
+    ├── dataset.jsonl
+    ├── evaluate_retrieval.py
+    ├── evaluate_rag.py
+    ├── evaluate_guardrails.py
+    └── run_evals.py
+
 ```
 
 Additional modules may be appropriate for ingestion, document metadata, database helpers, or schemas as the implementation grows. Keep modules focused; do not duplicate the same application in multiple files.
